@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/etIPAdresa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="16"
+        android:layout_marginTop="50px"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/ip_adresa"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/etPort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="16"
+        android:layout_marginTop="50px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/etIPAdresa"
+        android:hint="@string/port"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/etIme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="16"
+        android:layout_marginTop="50px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/etPort"
+        android:hint="@string/korisnicko_ime"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/konekcija"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40px"
+        android:layout_below="@+id/etIme"/>
+
+    <TextView
+        android:id="@+id/tvPoruka"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnConnect"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80px"
+        android:text=""
+        android:textSize="60px"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/sPlayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvPoruka"/>
+
+    <Button
+        android:id="@+id/btnAzuriraj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/azuriraj"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40px"
+        android:enabled="false"
+        android:layout_below="@+id/sPlayers"/>
+
+</RelativeLayout>
