@@ -26,6 +26,7 @@ public class ConnectedClient implements Runnable{
     private PrintWriter pw;
     private BufferedReader br;
     private Map<String, ConnectedClient> users;
+    private boolean inGame = false;
     
     public Socket getSocket(){
         return this.socket;
@@ -33,6 +34,14 @@ public class ConnectedClient implements Runnable{
     
     public PrintWriter getPw(){
         return this.pw;
+    }
+    
+    public void setInGame(boolean inGame){
+        this.inGame = inGame;
+    }
+    
+    public boolean getInGame(){
+        return this.inGame;
     }
     
     public ConnectedClient(Socket socket, Map<String, ConnectedClient> users){
@@ -71,26 +80,51 @@ public class ConnectedClient implements Runnable{
         
         //System.out.println("Broj povezanih klijenata je: " + this.users.size());
         
-        try{
-            option = this.br.readLine();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            return;
-        }
-        
-        if(option.equals("AZURIRAJ")){
-            String players = new String();
-            Set<String> keys = this.users.keySet();
-            for(String item : keys){
-                if(!item.equals(username))
-                    players += item + ";";
+        while(true){
+            try{
+                option = this.br.readLine();
             }
-            String players1 = keys.size()-1 + ";" + players;
-            this.pw.println(players1.substring(0, players1.length()-1));
-        }
-        else if(option.equals("POSALJI_ZAHTEV")){
+            catch(Exception e){
+                e.printStackTrace();
+                return;
+            }
             
+            //ovaj if je u slucaju da klijent klikne x na simualtoru ili se odjavi na drugaciji nacin od predvidjenog
+            if(option == null){
+                break;
+            }
+            else if(option.equals("AZURIRAJ")){
+                //this.users.get(username).setInGame(false);
+                String players = new String();
+                Map<String, Boolean> data = new HashMap<>();
+            
+                for(Map.Entry item : this.users.entrySet()){
+                    data.put((String)item.getKey(), ((ConnectedClient)this.users.get(item.getKey())).getInGame());
+                }
+                //data.put("hello", false);
+            
+                int size = 0;
+                for(Map.Entry item : data.entrySet()){
+                    if(!item.getKey().equals(username)){
+                        if(!(boolean)item.getValue()){
+                            players += item.getKey() + ";";
+                            size++;
+                        }
+                    }
+                }
+            
+                String playersFull = "";
+                if(!players.equals("")){
+                    playersFull = size + ";" + players;
+                    this.pw.println(playersFull.substring(0, playersFull.length()-1));
+                }
+                else
+                    this.pw.println(playersFull);
+            }
+            else if(option.split(";")[0].equals("POSALJI_ZAHTEV")){
+                //System.out.println("Msg sent to: " + option.split(";")[1]);
+                this.users.get(option.split(";")[1]).getPw().println(username + " said hello!");
+            }
         }
         
         /*String username;

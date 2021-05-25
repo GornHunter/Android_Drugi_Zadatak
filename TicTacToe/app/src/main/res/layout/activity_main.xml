@@ -76,4 +76,24 @@
         android:enabled="false"
         android:layout_below="@+id/sPlayers"/>
 
+    <Button
+        android:id="@+id/btnProvera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Provera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40px"
+        android:layout_below="@+id/btnAzuriraj"/>
+
+    <TextView
+        android:id="@+id/tvTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnProvera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80px"
+        android:text=""
+        android:textSize="70px"
+        android:textStyle="bold" />
+
 </RelativeLayout>

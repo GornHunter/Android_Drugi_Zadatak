@@ -26,9 +26,7 @@ public class ServerAndroid {
     private PrintWriter pw;
     private BufferedReader br;
     private ArrayList<Thread> clients;
-    private Map<String, ConnectedClient> users;
-    private Map<String, String> test;
-            
+    private Map<String, ConnectedClient> users;            
 
     public ServerSocket getSs() {
         return ss;
@@ -37,7 +35,6 @@ public class ServerAndroid {
     public ServerAndroid() {
         clients = new ArrayList<>();
         users = new HashMap<>();
-        test = new HashMap<>();
         try {
             ss = new ServerSocket(1025);
         } catch (IOException ex) {

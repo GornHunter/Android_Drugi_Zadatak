@@ -2,7 +2,9 @@ package com.example.tic_tac_toe;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,16 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "igor";
+    public final static int CONFIRMATION_REQUEST = 1;
+
     EditText ipAdresa, port, ime;
-    Button konekcija, azuriraj;
-    TextView poruka;
+    Button konekcija, azuriraj, provera;
+    TextView poruka, test;
     Spinner players;
     Socket[] socket;
     PrintWriter[] pw;
     BufferedReader[] br;
 
     String korisnickoIme;
-    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +44,13 @@ public class MainActivity extends AppCompatActivity {
         ipAdresa = (EditText) findViewById(R.id.etIPAdresa);
         port = (EditText) findViewById(R.id.etPort);
         ime = (EditText) findViewById(R.id.etIme);
+
         konekcija = (Button) findViewById(R.id.btnConnect);
         azuriraj = (Button) findViewById(R.id.btnAzuriraj);
+        provera = (Button) findViewById(R.id.btnProvera);
+
         poruka = (TextView) findViewById(R.id.tvPoruka);
+        test = (TextView) findViewById(R.id.tvTest);
         players = (Spinner) findViewById(R.id.sPlayers);
 
         List<String> arraySpinner = new ArrayList<>();
@@ -59,18 +67,38 @@ public class MainActivity extends AppCompatActivity {
         players.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                runOnUiThread(new Runnable() {
+                //runOnUiThread(new Runnable() {
+                //    @Override
+                //    public void run() {
+                //        if(parent.getSelectedItem().toString().equals("")) {
+                //            //nije izabran igrac, ne raditi nista
+                //        }
+                //        else {
+                //            //izabran igrac
+                //            //Toast.makeText(MainActivity.this, parent.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                //        }
+                //    }
+                //});
+
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(parent.getSelectedItem().toString().equals("")) {
-                            //nije izabran igrac, ne raditi nista
+                        if(parent.getSelectedItem().toString().equals("")){
+
                         }
-                        else {
-                            //izabran igrac
-                            Toast.makeText(MainActivity.this, parent.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                        else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    provera.setEnabled(false);
+                                    players.setEnabled(false);
+                                }
+                            });
+                            pw[0].println("POSALJI_ZAHTEV" + ";" + parent.getSelectedItem().toString());
+                            //init(korisnickoIme);
                         }
                     }
-                });
+                }).start();
             }
 
             @Override
@@ -98,12 +126,17 @@ public class MainActivity extends AppCompatActivity {
                             //pw[0] = null;
                             //br[0] = null;
                             try {
-                                if(pw[0] == null && br[0] == null)
-                                pw[0] = new PrintWriter(socket[0].getOutputStream(), true);
-                                br[0] = new BufferedReader(new InputStreamReader(socket[0].getInputStream()));
+                                if(pw[0] == null && br[0] == null) {
+                                    pw[0] = new PrintWriter(socket[0].getOutputStream(), true);
+                                    br[0] = new BufferedReader(new InputStreamReader(socket[0].getInputStream()));
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
+                            NetworkSingleton.setSocket(socket[0]);
+                            NetworkSingleton.setPrintWriter(pw[0]);
+                            NetworkSingleton.setBufferedReader(br[0]);
 
                             pw[0].println(ime.getText());
 
@@ -161,24 +194,55 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        //arraySpinner.add(i+"");
-                        //i++;
                         pw[0].println("AZURIRAJ");
-                        String line = null;
+                        String[] line = new String[1];
                         try{
-                            line = br[0].readLine();
+                            line[0] = br[0].readLine();
                         }
                         catch(IOException e){
                             e.printStackTrace();
                         }
 
                         arraySpinner.subList(1, arraySpinner.size()).clear();
-                        for(int i = 1;i <= Integer.parseInt(line.split(";")[0]);i++){
-                            arraySpinner.add(line.split(";")[i]);
+                        if(line[0].contains(";")) {
+                            for (int i = 1; i < Integer.parseInt(line[0].split(";")[0]) + 1; i++) {
+                                arraySpinner.add(line[0].split(";")[i]);
+                            }
                         }
+                        else if(line.equals("")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "Svi igraci su u igri!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        else{
+                            provera.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(MainActivity.this, line[0], Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!players.isEnabled()) {
+                                    provera.setEnabled(true);
+                                    players.setEnabled(true);
+                                }
+                            }
+                        });
                     }
                 }).start();
             }
         });
+    }
+
+    private void init(String text){
+        Intent intent = new Intent(this, SecondActivity.class);
+        intent.putExtra(EXTRA_MESSAGE,text);
+        startActivityForResult(intent,CONFIRMATION_REQUEST);
     }
 }
