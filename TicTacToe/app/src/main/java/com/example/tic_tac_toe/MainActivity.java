@@ -2,6 +2,8 @@ package com.example.tic_tac_toe;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -27,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     public final static int CONFIRMATION_REQUEST = 1;
 
     EditText ipAdresa, port, ime;
-    Button konekcija, azuriraj, provera;
-    TextView poruka, test;
+    Button konekcija, azuriraj, provera, potvrda;
+    TextView poruka;
     Spinner players;
     Socket[] socket;
     PrintWriter[] pw;
@@ -48,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         konekcija = (Button) findViewById(R.id.btnConnect);
         azuriraj = (Button) findViewById(R.id.btnAzuriraj);
         provera = (Button) findViewById(R.id.btnProvera);
+        potvrda = (Button) findViewById(R.id.btnPotvrda);
 
         poruka = (TextView) findViewById(R.id.tvPoruka);
-        test = (TextView) findViewById(R.id.tvTest);
         players = (Spinner) findViewById(R.id.sPlayers);
 
         List<String> arraySpinner = new ArrayList<>();
@@ -87,14 +89,18 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                         else{
+                            PrintWriter p = pw[0];
+                            p.println("POSALJI_ZAHTEV" + ";" + parent.getSelectedItem().toString());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     provera.setEnabled(false);
                                     players.setEnabled(false);
+                                    potvrda.setEnabled(true);
                                 }
                             });
-                            pw[0].println("POSALJI_ZAHTEV" + ";" + parent.getSelectedItem().toString());
+
+
                             //init(korisnickoIme);
                         }
                     }
@@ -168,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
                                         ime.setEnabled(false);
 
                                         players.setEnabled(true);
+                                        azuriraj.setEnabled(true);
+                                        provera.setEnabled(true);
+
                                         Toast.makeText(MainActivity.this, "Uspesno ste se prijavili na server!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -194,10 +203,13 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        pw[0].println("AZURIRAJ");
+                        PrintWriter p = pw[0];
+                        BufferedReader b = br[0];
+
+                        p.println("AZURIRAJ");
                         String[] line = new String[1];
                         try{
-                            line[0] = br[0].readLine();
+                            line[0] = b.readLine();
                         }
                         catch(IOException e){
                             e.printStackTrace();
@@ -209,28 +221,24 @@ public class MainActivity extends AppCompatActivity {
                                 arraySpinner.add(line[0].split(";")[i]);
                             }
                         }
-                        else if(line.equals("")){
+                        else if(line[0].equals("")){
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     Toast.makeText(MainActivity.this, "Svi igraci su u igri!", Toast.LENGTH_SHORT).show();
                                 }
                             });
+                            //Toast.makeText(MainActivity.this, "Svi igraci su u igri!", Toast.LENGTH_SHORT).show();
                         }
-                        else{
-                            provera.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Toast.makeText(MainActivity.this, line[0], Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if(!players.isEnabled()) {
                                     provera.setEnabled(true);
                                     players.setEnabled(true);
+                                    potvrda.setEnabled(true);
+                                    players.setSelection(0);
                                 }
                             }
                         });
@@ -238,9 +246,142 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         });
+
+        provera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BufferedReader b = br[0];
+                        String response;
+                        try {
+                            response = b.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+                                adb.setTitle("Potvrda za igru");
+                                adb.setMessage(response.split(";")[1]);
+                                adb.setCancelable(false);
+
+                                adb.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //Toast.makeText(MainActivity.this, "Da", Toast.LENGTH_SHORT).show();
+                                        //provera.setEnabled(false);
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                PrintWriter p = pw[0];
+                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[0] + ";" + "da");
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        players.setEnabled(true);
+                                                        players.setSelection(0);
+                                                        azuriraj.setEnabled(true);
+                                                        provera.setEnabled(true);
+                                                        potvrda.setEnabled(false);
+
+                                                        pokreniIgru(response.split(";")[0] + "-" + korisnickoIme);
+                                                    }
+                                                });
+                                            }
+                                        }).start();
+                                    }
+                                });
+
+                                adb.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        players.setEnabled(true);
+                                                        players.setSelection(0);
+                                                        azuriraj.setEnabled(true);
+                                                        provera.setEnabled(true);
+                                                        potvrda.setEnabled(false);
+                                                    }
+                                                });
+                                                PrintWriter p = pw[0];
+                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[0] + ";" + "ne");
+                                            }
+                                        }).start();
+                                    }
+                                });
+
+                                AlertDialog ad = adb.create();
+                                ad.show();
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
+
+        potvrda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BufferedReader b = br[0];
+                        String response;
+                        try {
+                            response = b.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        if(response.split(";")[0].equals("da")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    players.setEnabled(true);
+                                    players.setSelection(0);
+                                    azuriraj.setEnabled(true);
+                                    provera.setEnabled(true);
+                                    potvrda.setEnabled(false);
+                                    Toast.makeText(MainActivity.this, response.split(";")[1] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
+
+                                    pokreniIgru(korisnickoIme + "-" + response.split(";")[1]);
+                                }
+                            });
+
+                            PrintWriter p = pw[0];
+                            p.println("POKRENI_IGRU");
+                        }
+                        else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    players.setEnabled(true);
+                                    players.setSelection(0);
+                                    azuriraj.setEnabled(true);
+                                    provera.setEnabled(true);
+                                    potvrda.setEnabled(false);
+                                    Toast.makeText(MainActivity.this, response.split(";")[1] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
     }
 
-    private void init(String text){
+    private void pokreniIgru(String text){
         Intent intent = new Intent(this, SecondActivity.class);
         intent.putExtra(EXTRA_MESSAGE,text);
         startActivityForResult(intent,CONFIRMATION_REQUEST);

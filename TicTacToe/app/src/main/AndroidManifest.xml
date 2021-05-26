@@ -12,13 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TicTacToe">
-        <activity android:name=".SecondActivity">
+        <activity android:name=".SecondActivity" android:label="Iks-Oks">
             <intent-filter>
                 <action android:name="package.OtherActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:label="Registracija i odabir protivnika">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

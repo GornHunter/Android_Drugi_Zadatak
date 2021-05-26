@@ -5,4 +5,6 @@
     <string name="korisnicko_ime">Korisnicko ime</string>
     <string name="konekcija">Konekcija</string>
     <string name="azuriraj">Azuriraj igrace</string>
+    <string name="provera">Provera pristiglog zahteva</string>
+    <string name="potvrda">Provera odgovora</string>
 </resources>

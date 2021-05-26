@@ -123,9 +123,22 @@ public class ConnectedClient implements Runnable{
             }
             else if(option.split(";")[0].equals("POSALJI_ZAHTEV")){
                 //System.out.println("Msg sent to: " + option.split(";")[1]);
-                this.users.get(option.split(";")[1]).getPw().println(username + " said hello!");
+                //this.users.get(option.split(";")[1]).getPw().println(username + " said hello!");
+                this.users.get(option.split(";")[1]).getPw().println(username + ";" + username + " ti salje zahtev za igru. Da li zelite da prihvatite?");
+            }
+            else if(option.split(";")[0].equals("VRATI_ODGOVOR")){
+                if(option.split(";")[2].equals("ne"))
+                    this.users.get(option.split(";")[1]).getPw().println(option.split(";")[2] + ";" + username);
+                else{
+                    this.users.get(option.split(";")[1]).getPw().println(option.split(";")[2] + ";" + username);
+                    break;
+                }
+            }
+            else if(option.equals("POKRENI_IGRU")){
+                break;
             }
         }
+        System.out.println(username + ": Igra je prihvacena!");
         
         /*String username;
         try{
