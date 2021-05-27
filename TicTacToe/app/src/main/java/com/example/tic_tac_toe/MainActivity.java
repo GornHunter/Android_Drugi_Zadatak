@@ -66,6 +66,124 @@ public class MainActivity extends AppCompatActivity {
         pw = new PrintWriter[1];
         br = new BufferedReader[1];
 
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    BufferedReader b = br[0];
+                    String response;
+                    try {
+                        response = b.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    if(response.split(";")[0].equals("AZURIRAJ")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                arraySpinner.subList(1, arraySpinner.size()).clear();
+                                if (!response.split(";")[1].equals("-1")) {
+                                    for (int i = 2; i < Integer.parseInt(response.split(";")[1]) + 2; i++) {
+                                        if(!response.split(";")[i].equals(korisnickoIme))
+                                            arraySpinner.add(response.split(";")[i]);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    else if(response.equals("")){
+                        arraySpinner.subList(1, arraySpinner.size()).clear();
+                    }
+                    else if(response.split(";")[0].equals("PRIMI_ZAHTEV")){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+                                adb.setTitle("Potvrda za igru");
+                                adb.setMessage(response.split(";")[2]);
+                                adb.setCancelable(false);
+
+                                adb.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        //players.setEnabled(true);
+                                                        //players.setSelection(0);
+                                                        //azuriraj.setEnabled(true);
+                                                        //provera.setEnabled(true);
+                                                        //potvrda.setEnabled(false);
+
+                                                        Toast.makeText(MainActivity.this, "Kliknuli ste da!", Toast.LENGTH_SHORT).show();
+                                                        pokreniIgru(response.split(";")[1] + "-" + korisnickoIme);
+                                                    }
+                                                });
+                                                PrintWriter p = pw[0];
+                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[1] + ";" + "da");
+                                            }
+                                        }).start();
+                                    }
+                                });
+
+                                adb.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        //players.setEnabled(true);
+                                                        //players.setSelection(0);
+                                                        //azuriraj.setEnabled(true);
+                                                        //provera.setEnabled(true);
+                                                        //potvrda.setEnabled(false);
+
+                                                        Toast.makeText(MainActivity.this, "Kliknuli ste ne!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                                PrintWriter p = pw[0];
+                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[1] + ";" + "ne");
+                                            }
+                                        }).start();
+                                    }
+                                });
+
+                                AlertDialog ad = adb.create();
+                                ad.show();
+                            }
+                        });
+                    }
+                    else if(response.split(";")[0].equals("PRIMI_ODGOVOR")){
+                        if(response.split(";")[1].equals("da")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                    pokreniIgru(korisnickoIme + "-" + response.split(";")[2]);
+                                }
+                            });
+                        }
+                        else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, response.split(";")[2] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
         players.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -94,14 +212,12 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    provera.setEnabled(false);
-                                    players.setEnabled(false);
-                                    potvrda.setEnabled(true);
+                                    players.setSelection(0);
+                                    //provera.setEnabled(false);
+                                    //players.setEnabled(false);
+                                    //potvrda.setEnabled(true);
                                 }
                             });
-
-
-                            //init(korisnickoIme);
                         }
                     }
                 }).start();
@@ -146,15 +262,15 @@ public class MainActivity extends AppCompatActivity {
 
                             pw[0].println(ime.getText());
 
-                            String response = null;
+                            String[] response = new String[1];
                             try{
-                                response = br[0].readLine();
+                                response[0] = br[0].readLine();
                             }
                             catch(IOException e){
                                 e.printStackTrace();
                             }
 
-                            if(response.equals("ok")){
+                            if(response[0].split(";")[0].equals("ok")){
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -180,7 +296,8 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Uspesno ste se prijavili na server!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                            } else{
+                                t.start();
+                            } else if(response[0].split(";")[0].equals("no")){
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -225,10 +342,9 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "Svi igraci su u igri!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, "Trenutno nema raspolozivih igraca!", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            //Toast.makeText(MainActivity.this, "Svi igraci su u igri!", Toast.LENGTH_SHORT).show();
                         }
 
                         runOnUiThread(new Runnable() {

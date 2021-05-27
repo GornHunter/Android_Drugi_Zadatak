@@ -27,7 +27,13 @@ public class SecondActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkSingleton.getPrintWriter().println("GO_BACK;");
+                        finish();
+                    }
+                }).start();
             }
         });
     }

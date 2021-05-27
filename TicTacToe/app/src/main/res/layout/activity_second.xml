@@ -7,13 +7,48 @@
     tools:context=".SecondActivity">
 
     <TextView
-        android:id="@+id/tvP"
+        android:id="@+id/tvPlayer1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80px"
-        android:text=""
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="50px"
+        android:layout_marginLeft="50px"
+        android:text="player1"
         android:textSize="80px"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPlayer1"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="150px"
+        android:text="0"
+        android:textSize="60px"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvPlayer2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="50px"
+        android:layout_marginRight="50px"
+        android:text="player2"
+        android:textSize="80px"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvScore2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvPlayer2"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="150px"
+        android:text="0"
+        android:textSize="60px"
         android:textStyle="bold" />
 
     <Button
@@ -23,6 +58,6 @@
         android:text="Back"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40px"
-        android:layout_below="@+id/tvP"/>
+        android:layout_below="@+id/tvScore2"/>
 
 </RelativeLayout>

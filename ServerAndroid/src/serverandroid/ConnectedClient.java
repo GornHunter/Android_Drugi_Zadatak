@@ -56,6 +56,28 @@ public class ConnectedClient implements Runnable{
             Logger.getLogger(ServerAndroid.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void azurirajIgrace(){
+        String players = "";
+        int size = 0;
+                
+        for(Map.Entry item : this.users.entrySet()){
+                if(!this.users.get(item.getKey()).getInGame()){
+                    players += item.getKey() + ";";
+                    size++;
+            }
+        }
+                
+        if(players.equals("")){
+            
+        }
+        else{
+            String p = "AZURIRAJ" + ";" + size + ";" + players;
+            for(Map.Entry item : this.users.entrySet()){
+                this.users.get(item.getKey()).getPw().println(p.substring(0, p.length()-1));
+            }
+        }
+    }
 
     @Override
     public void run() {
@@ -72,11 +94,14 @@ public class ConnectedClient implements Runnable{
             }
             if(!this.users.containsKey(username)){
                 this.users.put(username, this);
-                this.pw.println("ok");
+                this.pw.println("ok;");
+                
                 break;
             }
-            this.pw.println("no");
+            this.pw.println("no;");
         }
+        
+        azurirajIgrace();
         
         //System.out.println("Broj povezanih klijenata je: " + this.users.size());
         
@@ -91,17 +116,17 @@ public class ConnectedClient implements Runnable{
             
             //ovaj if je u slucaju da klijent klikne x na simualtoru ili se odjavi na drugaciji nacin od predvidjenog
             if(option == null){
+                this.users.remove(username);
                 break;
             }
             else if(option.equals("AZURIRAJ")){
                 //this.users.get(username).setInGame(false);
-                String players = new String();
+                /*String players = new String();
                 Map<String, Boolean> data = new HashMap<>();
             
                 for(Map.Entry item : this.users.entrySet()){
                     data.put((String)item.getKey(), ((ConnectedClient)this.users.get(item.getKey())).getInGame());
                 }
-                //data.put("hello", false);
             
                 int size = 0;
                 for(Map.Entry item : data.entrySet()){
@@ -116,25 +141,35 @@ public class ConnectedClient implements Runnable{
                 String playersFull = "";
                 if(!players.equals("")){
                     playersFull = size + ";" + players;
-                    this.pw.println(playersFull.substring(0, playersFull.length()-1));
+                    this.pw.println(playersFull.substring(0, playersFull.length()-1));*
                 }
                 else
-                    this.pw.println(playersFull);
+                    this.pw.println(playersFull);*/
             }
             else if(option.split(";")[0].equals("POSALJI_ZAHTEV")){
                 //System.out.println("Msg sent to: " + option.split(";")[1]);
                 //this.users.get(option.split(";")[1]).getPw().println(username + " said hello!");
-                this.users.get(option.split(";")[1]).getPw().println(username + ";" + username + " ti salje zahtev za igru. Da li zelite da prihvatite?");
+                this.users.get(option.split(";")[1]).getPw().println("PRIMI_ZAHTEV" + ";" + username + ";" + username + " ti salje zahtev za igru. Da li zelite da prihvatite?");
             }
             else if(option.split(";")[0].equals("VRATI_ODGOVOR")){
                 if(option.split(";")[2].equals("ne"))
-                    this.users.get(option.split(";")[1]).getPw().println(option.split(";")[2] + ";" + username);
+                    this.users.get(option.split(";")[1]).getPw().println("PRIMI_ODGOVOR" + ";" + option.split(";")[2] + ";" + username);
                 else{
-                    this.users.get(option.split(";")[1]).getPw().println(option.split(";")[2] + ";" + username);
-                    break;
+                    this.users.get(option.split(";")[1]).getPw().println("PRIMI_ODGOVOR" + ";" + option.split(";")[2] + ";" + username);
+                    this.users.get(username).setInGame(true);
+                    this.users.get(option.split(";")[1]).setInGame(true);
+                    this.users.get(username).getPw().println("");
+                    this.users.get(option.split(";")[1]).getPw().println("");
+                    azurirajIgrace();
+                    //break;
                 }
             }
+            else if(option.split(";")[0].equals("GO_BACK")){
+                this.users.get(username).setInGame(false);
+                azurirajIgrace();
+            }
             else if(option.equals("POKRENI_IGRU")){
+                this.users.get(username).setInGame(true);
                 break;
             }
         }
