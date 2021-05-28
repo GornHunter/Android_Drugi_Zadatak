@@ -7,7 +7,7 @@
     tools:context=".SecondActivity">
 
     <TextView
-        android:id="@+id/tvPlayer1"
+        android:id="@+id/tvIgrac1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -18,18 +18,18 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tv"
+        android:id="@+id/tvRezultat1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlayer1"
+        android:layout_below="@+id/tvIgrac1"
         android:layout_marginTop="16dp"
-        android:layout_marginLeft="150px"
+        android:layout_marginLeft="140px"
         android:text="0"
         android:textSize="60px"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvPlayer2"
+        android:id="@+id/tvIgrac2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -40,15 +40,132 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvScore2"
+        android:id="@+id/tvRezultat2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/tvPlayer2"
+        android:layout_below="@+id/tvIgrac2"
         android:layout_marginTop="16dp"
-        android:layout_marginRight="150px"
+        android:layout_marginRight="140px"
         android:text="0"
         android:textSize="60px"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvStanje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvIgrac2"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="150px"
+        android:text=""
+        android:textSize="60px"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_0"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_marginTop="200px"
+        android:layout_marginLeft="140px"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/tvRezultat1"/>
+
+    <Button
+        android:id="@+id/btn_1"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/tvRezultat1"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="200px"
+        android:layout_toRightOf="@+id/btn_0"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_2"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/tvRezultat1"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="200px"
+        android:layout_toRightOf="@+id/btn_1"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_3"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_0"
+        android:layout_marginLeft="140px"
+        android:layout_marginTop="-20px"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_4"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_1"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="-20px"
+        android:layout_toRightOf="@+id/btn_3"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_5"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_2"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="-20px"
+        android:layout_toRightOf="@+id/btn_4"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_6"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_3"
+        android:layout_marginLeft="140px"
+        android:layout_marginTop="-20px"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_7"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_4"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="-20px"
+        android:layout_toRightOf="@+id/btn_6"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_8"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/btn_5"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="-20px"
+        android:layout_toRightOf="@+id/btn_7"
+        android:backgroundTint="@color/black"
+        android:textSize="60sp"
         android:textStyle="bold" />
 
     <Button
@@ -57,7 +174,7 @@
         android:layout_height="wrap_content"
         android:text="Back"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40px"
-        android:layout_below="@+id/tvScore2"/>
+        android:layout_marginTop="160px"
+        android:layout_below="@+id/btn_6"/>
 
 </RelativeLayout>

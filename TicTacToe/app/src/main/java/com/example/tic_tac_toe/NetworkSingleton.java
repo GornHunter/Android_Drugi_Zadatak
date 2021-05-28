@@ -8,7 +8,6 @@ public class NetworkSingleton {
      private static Socket socket;
      private static PrintWriter pw;
      private static BufferedReader br;
-     private static String msg;
 
      public static void setSocket(Socket socket){
          com.example.tic_tac_toe.NetworkSingleton.socket = socket;
@@ -32,13 +31,5 @@ public class NetworkSingleton {
 
      public static BufferedReader getBufferedReader(){
          return com.example.tic_tac_toe.NetworkSingleton.br;
-     }
-
-     public static void setMsg(String msg){
-         NetworkSingleton.msg = msg;
-     }
-
-     public static String getMsg(){
-         return NetworkSingleton.msg;
      }
 }

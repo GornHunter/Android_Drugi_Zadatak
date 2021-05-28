@@ -167,10 +167,11 @@ public class ConnectedClient implements Runnable{
             else if(option.split(";")[0].equals("GO_BACK")){
                 this.users.get(username).setInGame(false);
                 azurirajIgrace();
+                //this.pw.println("POSALJI;");
             }
+            //za samu igru
             else if(option.equals("POKRENI_IGRU")){
-                this.users.get(username).setInGame(true);
-                break;
+                
             }
         }
         System.out.println(username + ": Igra je prihvacena!");

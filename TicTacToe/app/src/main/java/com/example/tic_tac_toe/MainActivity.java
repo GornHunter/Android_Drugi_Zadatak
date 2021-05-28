@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         socket = new Socket[1];
         pw = new PrintWriter[1];
         br = new BufferedReader[1];
+        boolean[] gotovo = new boolean[1];
+        gotovo[0] = false;
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -120,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
                                                         //provera.setEnabled(true);
                                                         //potvrda.setEnabled(false);
 
-                                                        Toast.makeText(MainActivity.this, "Kliknuli ste da!", Toast.LENGTH_SHORT).show();
-                                                        pokreniIgru(response.split(";")[1] + "-" + korisnickoIme);
+                                                        //Toast.makeText(MainActivity.this, "Kliknuli ste da!", Toast.LENGTH_SHORT).show();
+                                                        pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false);
                                                     }
                                                 });
                                                 PrintWriter p = pw[0];
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                                                         //provera.setEnabled(true);
                                                         //potvrda.setEnabled(false);
 
-                                                        Toast.makeText(MainActivity.this, "Kliknuli ste ne!", Toast.LENGTH_SHORT).show();
+                                                        //Toast.makeText(MainActivity.this, "Kliknuli ste ne!", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                                 PrintWriter p = pw[0];
@@ -167,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
-                                    pokreniIgru(korisnickoIme + "-" + response.split(";")[2]);
+                                    pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";");
+
                                 }
                             });
                         }
