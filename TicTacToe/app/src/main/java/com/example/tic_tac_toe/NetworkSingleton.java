@@ -8,28 +8,37 @@ public class NetworkSingleton {
      private static Socket socket;
      private static PrintWriter pw;
      private static BufferedReader br;
+     private static Object lock;
 
      public static void setSocket(Socket socket){
-         com.example.tic_tac_toe.NetworkSingleton.socket = socket;
+         NetworkSingleton.socket = socket;
      }
 
      public static Socket getSocket(){
-         return com.example.tic_tac_toe.NetworkSingleton.socket;
+         return NetworkSingleton.socket;
      }
 
      public static void setPrintWriter(PrintWriter pw){
-         com.example.tic_tac_toe.NetworkSingleton.pw = pw;
+         NetworkSingleton.pw = pw;
      }
 
      public static PrintWriter getPrintWriter(){
-         return com.example.tic_tac_toe.NetworkSingleton.pw;
+         return NetworkSingleton.pw;
      }
 
      public static void setBufferedReader(BufferedReader br){
-         com.example.tic_tac_toe.NetworkSingleton.br = br;
+         NetworkSingleton.br = br;
      }
 
      public static BufferedReader getBufferedReader(){
-         return com.example.tic_tac_toe.NetworkSingleton.br;
+         return NetworkSingleton.br;
      }
+
+    public static void setLock(Object lock){
+        NetworkSingleton.lock = lock;
+    }
+
+    public static Object getLock(){
+        return NetworkSingleton.lock;
+    }
 }

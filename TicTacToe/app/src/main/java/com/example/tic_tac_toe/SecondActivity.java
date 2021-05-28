@@ -1,6 +1,7 @@
 package com.example.tic_tac_toe;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -42,7 +43,8 @@ public class SecondActivity extends AppCompatActivity {
         igrac2.setText(msg.split(";")[1]);
         boolean[] gotovo = new boolean[1];
         gotovo[0] = Boolean.parseBoolean(msg.split(";")[4]);
-
+        Object[] lock = new Object[1];
+        lock[0] = NetworkSingleton.getLock();
 
         igrac1.setTextColor(Color.parseColor("#000000"));
         igrac2.setTextColor(Color.parseColor("#000000"));
@@ -100,38 +102,41 @@ public class SecondActivity extends AppCompatActivity {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!gotovo[0]){
-                    BufferedReader b = NetworkSingleton.getBufferedReader();
-                    String line;
-                    try {
-                        line = b.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return;
-                    }
+                synchronized (lock[0]) {
+                    while (true) {
+                        BufferedReader b = NetworkSingleton.getBufferedReader();
+                        String line;
+                        try {
+                            line = b.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
+                        }
 
-                    if(line.split(";")[0].equals("POSALJI")){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(rezultat1.getText().toString().equals("0"))
-                                    rezultat1.setText("hello");
-                                else
-                                    rezultat1.setText("world");
+                        if (line.split(";")[0].equals("POSALJI")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (rezultat1.getText().toString().equals("0"))
+                                        rezultat1.setText("hello");
+                                    else
+                                        rezultat1.setText("world");
 
-                            }
-                        });
-                    }
-                    else if(line.split(";")[0].equals("PRIMI")){
-                        gotovo[0] = true;
+                                }
+                            });
+                        } else if (line.split(";")[0].equals("PRIMI")) {
+                            //gotovo[0] = true;
+                            lock[0].notify();
+                            break;
+                        }
                     }
                 }
-                runOnUiThread(new Runnable() {
+                /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(SecondActivity.this, "Drugi thread zavrsen!", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
             }
         });
         t.start();
@@ -160,9 +165,6 @@ public class SecondActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         NetworkSingleton.getPrintWriter().println("GO_BACK;");
-                        Intent intent = getIntent();
-                        intent.putExtra(RESPONSE_MESSAGE, "gotovo");
-                        setResult(RESULT_OK, intent);
                         finish();
                     }
                 }).start();
