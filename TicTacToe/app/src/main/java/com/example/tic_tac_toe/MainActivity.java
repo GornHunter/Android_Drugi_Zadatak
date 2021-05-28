@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Socket[] socket;
     PrintWriter[] pw;
     BufferedReader[] br;
+    Thread[] t = new Thread[1];
 
     String korisnickoIme;
 
@@ -68,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
         boolean[] gotovo = new boolean[1];
         gotovo[0] = false;
 
-        Thread t = new Thread(new Runnable() {
+        t[0] = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(!gotovo[0]) {
                     BufferedReader b = br[0];
                     String response;
                     try {
@@ -123,9 +124,10 @@ public class MainActivity extends AppCompatActivity {
                                                         //potvrda.setEnabled(false);
 
                                                         //Toast.makeText(MainActivity.this, "Kliknuli ste da!", Toast.LENGTH_SHORT).show();
-                                                        pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false);
+                                                        pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false + ";" + false);
                                                     }
                                                 });
+                                                gotovo[0] = true;
                                                 PrintWriter p = pw[0];
                                                 p.println("VRATI_ODGOVOR" + ";" + response.split(";")[1] + ";" + "da");
                                             }
@@ -168,22 +170,29 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
-                                    pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";");
+                                    //Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                    pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + false);
 
                                 }
                             });
+                            gotovo[0] = true;
                         }
                         else{
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, response.split(";")[2] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(MainActivity.this, response.split(";")[2] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     }
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "Zavrsen thread!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -299,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Uspesno ste se prijavili na server!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                                t.start();
+                                t[0].start();
                             } else if(response[0].split(";")[0].equals("no")){
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -504,5 +513,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SecondActivity.class);
         intent.putExtra(EXTRA_MESSAGE,text);
         startActivityForResult(intent,CONFIRMATION_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (requestCode == CONFIRMATION_REQUEST){
+                    if (resultCode == RESULT_OK){
+                        String okcode = (String)data.getExtras().get(SecondActivity.RESPONSE_MESSAGE);
+                        //treba da nastavi sa izvrsavanjem thread t
+                    }
+                }
+            }
+        }).start();
     }
 }

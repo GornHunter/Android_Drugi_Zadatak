@@ -10,17 +10,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class SecondActivity extends AppCompatActivity {
+    public final static String RESPONSE_MESSAGE = "msg";
+
     TextView igrac1, igrac2, rezultat1, rezultat2, ai;
     Button[] tabela = new Button[9];
     int[] stanje = new int[9];
     boolean[] aktivniIgrac = new boolean[1];
-    Button back;
+    Button back, promeni;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,8 @@ public class SecondActivity extends AppCompatActivity {
         ai = (TextView) findViewById(R.id.tvStanje);
         igrac1.setText(msg.split(";")[0]);
         igrac2.setText(msg.split(";")[1]);
+        boolean[] gotovo = new boolean[1];
+        gotovo[0] = Boolean.parseBoolean(msg.split(";")[4]);
 
 
         igrac1.setTextColor(Color.parseColor("#000000"));
@@ -95,7 +100,7 @@ public class SecondActivity extends AppCompatActivity {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(!gotovo[0]){
                     BufferedReader b = NetworkSingleton.getBufferedReader();
                     String line;
                     try {
@@ -109,18 +114,44 @@ public class SecondActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                rezultat1.setText("hello");
+                                if(rezultat1.getText().toString().equals(""))
+                                    rezultat1.setText("hello");
+                                else
+                                    rezultat1.setText("world");
+
                             }
                         });
                     }
+                    else if(line.split(";")[0].equals("PRIMI")){
+                        gotovo[0] = true;
+                    }
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SecondActivity.this, "Drugi thread zavrsen!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
         t.start();
 
         //poruka = (TextView) findViewById(R.id.tvP);
         back = (Button) findViewById(R.id.btnBack);
+        promeni = (Button) findViewById(R.id.btnPromeni);
         //poruka.setText(m);
+
+        promeni.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkSingleton.getPrintWriter().println("PROMENI;");
+                    }
+                }).start();
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +160,10 @@ public class SecondActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         NetworkSingleton.getPrintWriter().println("GO_BACK;");
-                        //finish();
+                        Intent intent = getIntent();
+                        intent.putExtra(RESPONSE_MESSAGE, "gotovo");
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 }).start();
             }

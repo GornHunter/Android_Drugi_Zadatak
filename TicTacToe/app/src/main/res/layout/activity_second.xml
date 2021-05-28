@@ -177,4 +177,13 @@
         android:layout_marginTop="160px"
         android:layout_below="@+id/btn_6"/>
 
+    <Button
+        android:id="@+id/btnPromeni"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Promeni"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60px"
+        android:layout_below="@+id/btnBack"/>
+
 </RelativeLayout>
