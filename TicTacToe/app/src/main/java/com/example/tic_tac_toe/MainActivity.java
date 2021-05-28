@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     PrintWriter[] pw;
     BufferedReader[] br;
     Thread[] t = new Thread[1];
+    Thread[] t2 = new Thread[1];
 
     String korisnickoIme;
 
@@ -73,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while(!gotovo[0]) {
-                    BufferedReader b = br[0];
+                    BufferedReader[] b = new BufferedReader[1];
+                    b[0] = br[0];
                     String response;
                     try {
-                        response = b.readLine();
+                        response = b[0].readLine();
                     } catch (IOException e) {
                         e.printStackTrace();
                         return;
@@ -172,10 +174,12 @@ public class MainActivity extends AppCompatActivity {
                                 public void run() {
                                     //Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
                                     pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + false);
-
                                 }
                             });
                             gotovo[0] = true;
+                            //pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + false);
+                            //PrintWriter p = pw[0];
+                            //p.println("POKRENI_IGRU");
                         }
                         else{
                             runOnUiThread(new Runnable() {
@@ -199,19 +203,6 @@ public class MainActivity extends AppCompatActivity {
         players.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //runOnUiThread(new Runnable() {
-                //    @Override
-                //    public void run() {
-                //        if(parent.getSelectedItem().toString().equals("")) {
-                //            //nije izabran igrac, ne raditi nista
-                //        }
-                //        else {
-                //            //izabran igrac
-                //            //Toast.makeText(MainActivity.this, parent.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-                //        }
-                //    }
-                //});
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -325,188 +316,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        azuriraj.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        PrintWriter p = pw[0];
-                        BufferedReader b = br[0];
-
-                        p.println("AZURIRAJ");
-                        String[] line = new String[1];
-                        try{
-                            line[0] = b.readLine();
-                        }
-                        catch(IOException e){
-                            e.printStackTrace();
-                        }
-
-                        arraySpinner.subList(1, arraySpinner.size()).clear();
-                        if(line[0].contains(";")) {
-                            for (int i = 1; i < Integer.parseInt(line[0].split(";")[0]) + 1; i++) {
-                                arraySpinner.add(line[0].split(";")[i]);
-                            }
-                        }
-                        else if(line[0].equals("")){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this, "Trenutno nema raspolozivih igraca!", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(!players.isEnabled()) {
-                                    provera.setEnabled(true);
-                                    players.setEnabled(true);
-                                    potvrda.setEnabled(true);
-                                    players.setSelection(0);
-                                }
-                            }
-                        });
-                    }
-                }).start();
-            }
-        });
-
-        provera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BufferedReader b = br[0];
-                        String response;
-                        try {
-                            response = b.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
-                                adb.setTitle("Potvrda za igru");
-                                adb.setMessage(response.split(";")[1]);
-                                adb.setCancelable(false);
-
-                                adb.setPositiveButton("Da", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //Toast.makeText(MainActivity.this, "Da", Toast.LENGTH_SHORT).show();
-                                        //provera.setEnabled(false);
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                PrintWriter p = pw[0];
-                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[0] + ";" + "da");
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        players.setEnabled(true);
-                                                        players.setSelection(0);
-                                                        azuriraj.setEnabled(true);
-                                                        provera.setEnabled(true);
-                                                        potvrda.setEnabled(false);
-
-                                                        pokreniIgru(response.split(";")[0] + "-" + korisnickoIme);
-                                                    }
-                                                });
-                                            }
-                                        }).start();
-                                    }
-                                });
-
-                                adb.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        players.setEnabled(true);
-                                                        players.setSelection(0);
-                                                        azuriraj.setEnabled(true);
-                                                        provera.setEnabled(true);
-                                                        potvrda.setEnabled(false);
-                                                    }
-                                                });
-                                                PrintWriter p = pw[0];
-                                                p.println("VRATI_ODGOVOR" + ";" + response.split(";")[0] + ";" + "ne");
-                                            }
-                                        }).start();
-                                    }
-                                });
-
-                                AlertDialog ad = adb.create();
-                                ad.show();
-                            }
-                        });
-                    }
-                }).start();
-            }
-        });
-
-        potvrda.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BufferedReader b = br[0];
-                        String response;
-                        try {
-                            response = b.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        if(response.split(";")[0].equals("da")){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    players.setEnabled(true);
-                                    players.setSelection(0);
-                                    azuriraj.setEnabled(true);
-                                    provera.setEnabled(true);
-                                    potvrda.setEnabled(false);
-                                    Toast.makeText(MainActivity.this, response.split(";")[1] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
-
-                                    pokreniIgru(korisnickoIme + "-" + response.split(";")[1]);
-                                }
-                            });
-
-                            PrintWriter p = pw[0];
-                            p.println("POKRENI_IGRU");
-                        }
-                        else{
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    players.setEnabled(true);
-                                    players.setSelection(0);
-                                    azuriraj.setEnabled(true);
-                                    provera.setEnabled(true);
-                                    potvrda.setEnabled(false);
-                                    Toast.makeText(MainActivity.this, response.split(";")[1] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                }).start();
-            }
-        });
     }
 
     private void pokreniIgru(String text){
@@ -524,6 +333,8 @@ public class MainActivity extends AppCompatActivity {
                     if (resultCode == RESULT_OK){
                         String okcode = (String)data.getExtras().get(SecondActivity.RESPONSE_MESSAGE);
                         //treba da nastavi sa izvrsavanjem thread t
+                        //t2[0] = t[0];
+                        //t2[0].start();
                     }
                 }
             }

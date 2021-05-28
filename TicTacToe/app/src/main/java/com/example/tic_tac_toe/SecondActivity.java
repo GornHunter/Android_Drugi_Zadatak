@@ -114,7 +114,7 @@ public class SecondActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(rezultat1.getText().toString().equals(""))
+                                if(rezultat1.getText().toString().equals("0"))
                                     rezultat1.setText("hello");
                                 else
                                     rezultat1.setText("world");

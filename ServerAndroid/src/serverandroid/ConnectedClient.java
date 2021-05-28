@@ -165,7 +165,6 @@ public class ConnectedClient implements Runnable{
                 }
             }
             else if(option.split(";")[0].equals("GO_BACK")){
-                this.pw.println("PRIMI;");
                 this.users.get(username).setInGame(false);
                 azurirajIgrace();
             }
@@ -174,7 +173,7 @@ public class ConnectedClient implements Runnable{
             }
             //za samu igru
             else if(option.equals("POKRENI_IGRU")){
-                
+                //this.pw.println("POKRENI");
             }
         }
         System.out.println(username + ": Igra je prihvacena!");
