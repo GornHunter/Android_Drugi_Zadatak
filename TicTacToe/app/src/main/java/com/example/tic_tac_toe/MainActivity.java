@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public final static int CONFIRMATION_REQUEST = 1;
 
     EditText ipAdresa, port, ime;
-    Button konekcija, azuriraj, provera, potvrda;
+    Button konekcija;
     TextView poruka;
     Spinner players;
     Socket[] socket;
@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
         ime = (EditText) findViewById(R.id.etIme);
 
         konekcija = (Button) findViewById(R.id.btnConnect);
-        azuriraj = (Button) findViewById(R.id.btnAzuriraj);
-        provera = (Button) findViewById(R.id.btnProvera);
-        potvrda = (Button) findViewById(R.id.btnPotvrda);
 
         poruka = (TextView) findViewById(R.id.tvPoruka);
         players = (Spinner) findViewById(R.id.sPlayers);
@@ -67,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         socket = new Socket[1];
         pw = new PrintWriter[1];
         br = new BufferedReader[1];
-        boolean[] gotovo = new boolean[1];
-        gotovo[0] = false;
         Object[] lock = new Object[1];
         lock[0] = 1;
 
@@ -91,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "AZURIRAJ!", Toast.LENGTH_SHORT).show();
                                     arraySpinner.subList(1, arraySpinner.size()).clear();
                                     if (!response.split(";")[1].equals("-1")) {
                                         for (int i = 2; i < Integer.parseInt(response.split(";")[1]) + 2; i++) {
@@ -127,18 +121,11 @@ public class MainActivity extends AppCompatActivity {
                                                     runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            //players.setEnabled(true);
-                                                            //players.setSelection(0);
-                                                            //azuriraj.setEnabled(true);
-                                                            //provera.setEnabled(true);
-                                                            //potvrda.setEnabled(false);
-
-                                                            //Toast.makeText(MainActivity.this, "Kliknuli ste da!", Toast.LENGTH_SHORT).show();
-                                                            //pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false + ";" + false);
+                                                            //pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false);
                                                         }
                                                     });
-                                                    //gotovo[0] = true;
-                                                    pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false + ";" + false);
+                                                    //pokreniIgru(response.split(";")[1] + ";" + korisnickoIme + ";" + ";" + false);
+                                                    pokreniIgru(korisnickoIme + ";" + response.split(";")[1] + ";" + ";" + false + ";" + 1);
                                                     PrintWriter p = pw[0];
                                                     p.println("VRATI_ODGOVOR" + ";" + response.split(";")[1] + ";" + "da");
                                                 }
@@ -168,31 +155,22 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        //Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
-                                        //pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + false);
+                                        Toast.makeText(MainActivity.this, response.split(";")[2] + " je prihvatio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                        //pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";");
                                     }
                                 });
-                                //gotovo[0] = true;
-                                pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + false);
-                                //PrintWriter p = pw[0];
-                                //p.println("POKRENI_IGRU");
+                                pokreniIgru(korisnickoIme + ";" + response.split(";")[2] + ";" + true + ";" + ";" + 2);
                             } else {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        //Toast.makeText(MainActivity.this, response.split(";")[2] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MainActivity.this, response.split(";")[2] + " je odbio zahtev za igru.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
                         }
                     }
                 }
-                /*runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "Zavrsen thread!", Toast.LENGTH_SHORT).show();
-                    }
-                });*/
             }
         });
 
@@ -212,9 +190,6 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     players.setSelection(0);
-                                    //provera.setEnabled(false);
-                                    //players.setEnabled(false);
-                                    //potvrda.setEnabled(true);
                                 }
                             });
                         }
@@ -235,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            //socket[0] = null;
                             try {
                                 if(socket[0] == null)
                                     socket[0] = new Socket(ipAdresa.getText().toString(), Integer.parseInt(port.getText().toString()));
@@ -244,8 +218,6 @@ public class MainActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            //pw[0] = null;
-                            //br[0] = null;
                             try {
                                 if(pw[0] == null && br[0] == null) {
                                     pw[0] = new PrintWriter(socket[0].getOutputStream(), true);
@@ -274,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        azuriraj.setEnabled(true);
                                         konekcija.setEnabled(false);
 
                                         ipAdresa.setText("");
@@ -290,8 +261,6 @@ public class MainActivity extends AppCompatActivity {
                                         ime.setEnabled(false);
 
                                         players.setEnabled(true);
-                                        azuriraj.setEnabled(true);
-                                        provera.setEnabled(true);
 
                                         Toast.makeText(MainActivity.this, "Uspesno ste se prijavili na server!", Toast.LENGTH_SHORT).show();
                                     }

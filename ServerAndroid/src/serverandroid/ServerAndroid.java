@@ -25,8 +25,10 @@ public class ServerAndroid {
     private ServerSocket ss;
     private PrintWriter pw;
     private BufferedReader br;
-    private ArrayList<Thread> clients;
-    private Map<String, ConnectedClient> users;            
+    private List<Thread> clients;
+    private Map<String, ConnectedClient> users;
+    private int[] stanje;
+    private String[] ponovoIgranje;
 
     public ServerSocket getSs() {
         return ss;
@@ -35,6 +37,9 @@ public class ServerAndroid {
     public ServerAndroid() {
         clients = new ArrayList<>();
         users = new HashMap<>();
+        stanje = new int[9];
+        Arrays.fill(stanje, 0);
+        ponovoIgranje = new String[2];
         try {
             ss = new ServerSocket(1025);
         } catch (IOException ex) {
@@ -50,6 +55,7 @@ public class ServerAndroid {
         ServerAndroid sa = new ServerAndroid();
         Socket s = null;
         Thread thr;
+        
         while (true) {
             System.out.println("Waiting for clients...");
             try {
@@ -61,7 +67,7 @@ public class ServerAndroid {
             
             if(s != null){
                 //thr = 
-                new Thread(new ConnectedClient(s, sa.users)).start();
+                new Thread(new ConnectedClient(s, sa.users, sa.stanje, sa.ponovoIgranje)).start();
                 //sa.clients.add(thr);
                 //thr.start();
             }
